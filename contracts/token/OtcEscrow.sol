@@ -89,7 +89,7 @@ contract OtcEscrow {
         address _dblAddress
     ) public {
         beneficiary = _beneficiary;
-        indexGov =  _dblGov;
+        dblGov =  _dblGov;
 
         vestingStart = _vestingStart;
         vestingCliff = _vestingCliff;
@@ -123,7 +123,7 @@ contract OtcEscrow {
         IERC20(dbl).safeTransfer(address(vesting), dblAmount);
 
         // Transfer USDC to dbl governance
-        IERC20(usdc).safeTransfer(indexGov, usdcAmount);
+        IERC20(usdc).safeTransfer(dblGov, usdcAmount);
 
         emit VestingDeployed(address(vesting));
     }
@@ -131,9 +131,9 @@ contract OtcEscrow {
     /**
      * Return DBL to Doubloon Governance to revoke the deal
      */
-    function revoke() external onlyIndexGov {
+    function revoke() external onlyDblGov {
         uint256 indexBalance = IERC20(dbl).balanceOf(address(this));
-        IERC20(dbl).safeTransfer(indexGov, indexBalance);
+        IERC20(dbl).safeTransfer(dblGov, indexBalance);
     }
 
     /**

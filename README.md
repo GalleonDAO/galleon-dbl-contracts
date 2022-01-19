@@ -48,7 +48,7 @@ The distribution comes with fixtures for mocking and testing interactions with o
 including Uniswap and Compound. To use these you'll need to install the peer dependencies listed in `package.json`.
 
 ```
-npm install @setprotocol/galleon-dao-contracts
+npm install @GalleonDAO/galleon-dao-contracts
 ```
 
 [22]: https://www.npmjs.com/package/hardhat
