@@ -2,20 +2,20 @@ import { Signer } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Address } from "../types";
 import {
-  IndexPowah,
-  IndexToken,
+  DoubloonPowah,
+  DoubloonToken,
   MerkleDistributor,
   OtcEscrow,
   Vesting,
   FTCVesting,
 } from "../contracts";
 
-import { IndexToken__factory } from "../../typechain/factories/IndexToken__factory";
+import { DoubloonToken__factory } from "../../typechain/factories/DoubloonToken__factory";
 import { MerkleDistributor__factory } from "../../typechain/factories/MerkleDistributor__factory";
 import { Vesting__factory } from "../../typechain/factories/Vesting__factory";
 import { OtcEscrow__factory } from "../../typechain/factories/OtcEscrow__factory";
 import { FTCVesting__factory } from "../../typechain/factories/FTCVesting__factory";
-import { IndexPowah__factory } from "@typechain/factories/IndexPowah__factory";
+import { DoubloonPowah__factory } from "@typechain/factories/DoubloonPowah__factory";
 
 export default class DeployToken {
   private _deployerSigner: Signer;
@@ -24,8 +24,8 @@ export default class DeployToken {
     this._deployerSigner = deployerSigner;
   }
 
-  public async deployIndexToken(initialAccount: Address): Promise<IndexToken> {
-    return await new IndexToken__factory(this._deployerSigner).deploy(initialAccount);
+  public async deployDoubloonToken(initialAccount: Address): Promise<DoubloonToken> {
+    return await new DoubloonToken__factory(this._deployerSigner).deploy(initialAccount);
   }
 
   public async deployMerkleDistributor(
@@ -55,30 +55,30 @@ export default class DeployToken {
 
   public async deployOtcEscrow(
     beneficiary: Address,
-    indexGov: Address,
+    dblGov: Address,
     vestingStart: BigNumber,
     vestingCliff: BigNumber,
     vestingEnd: BigNumber,
     usdcAmount: BigNumber,
-    indexAmount: BigNumber,
+    dblAmount: BigNumber,
     usdcAddress: Address,
-    indexAddress: Address,
+    dblAddress: Address,
   ): Promise<OtcEscrow> {
     return await new OtcEscrow__factory(this._deployerSigner).deploy(
       beneficiary,
-      indexGov,
+      dblGov,
       vestingStart,
       vestingCliff,
       vestingEnd,
       usdcAmount,
-      indexAmount,
+      dblAmount,
       usdcAddress,
-      indexAddress,
+      dblAddress,
     );
   }
 
   public async deployFtcVesting(
-    index: Address,
+    dbl: Address,
     recipient: Address,
     treasury: Address,
     vestingAmount: BigNumber,
@@ -87,7 +87,7 @@ export default class DeployToken {
     vestingEnd: BigNumber,
   ): Promise<FTCVesting> {
     return await new FTCVesting__factory(this._deployerSigner).deploy(
-      index,
+      dbl,
       recipient,
       treasury,
       vestingAmount,
@@ -97,19 +97,19 @@ export default class DeployToken {
     );
   }
 
-  public async deployIndexPowah(
+  public async deployDoubloonPowah(
     owner: Address,
-    indexToken: Address,
+    dblToken: Address,
     uniPair: Address,
     sushiPair: Address,
     masterChef: Address,
     masterChefId: BigNumber,
     farms: Address[],
     vesting: Address[],
-  ): Promise<IndexPowah> {
-    return await new IndexPowah__factory(this._deployerSigner).deploy(
+  ): Promise<DoubloonPowah> {
+    return await new DoubloonPowah__factory(this._deployerSigner).deploy(
       owner,
-      indexToken,
+      dblToken,
       uniPair,
       sushiPair,
       masterChef,

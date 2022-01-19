@@ -1,5 +1,5 @@
 {
-  "name": "@setprotocol/index-coop-contracts",
+  "name": "@galleondao/galleon-contracts",
   "version": "0.0.29",
   "description": "",
   "main": "dist",
@@ -50,11 +50,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SetProtocol/index-coop-contracts.git"
+    "url": "git+https://github.com/GalleonDAO/galleon-contracts.git"
   },
-  "author": "felix2feng",
+  "author": "andrew",
   "license": "MIT",
-  "homepage": "https://github.com/SetProtocol",
+  "homepage": "https://github.com/GalleonDAO",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",
     "@nomiclabs/hardhat-waffle": "^2.0.1",

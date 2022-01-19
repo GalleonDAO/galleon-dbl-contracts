@@ -13,7 +13,7 @@ import {
   getRandomAccount,
   getRandomAddress,
   getWaffleExpect,
-} from "@utils/index";
+} from "@utils/dbl";
 import { ContractTransaction } from "ethers";
 import { StandardTokenMock } from "@typechain/StandardTokenMock";
 import { Vesting__factory } from "@typechain/factories/Vesting__factory";
@@ -22,20 +22,20 @@ const expect = getWaffleExpect();
 
 describe("OtcEscrow", () => {
   let owner: Account;
-  let indexGov: Account;
+  let dblGov: Account;
   let investor: Account;
 
   let deployer: DeployHelper;
-  let index: IndexToken;
+  let dbl: IndexToken;
   let usdc: StandardTokenMock;
 
   before(async () => {
-    [owner, indexGov, investor] = await getAccounts();
+    [owner, dblGov, investor] = await getAccounts();
 
     deployer = new DeployHelper(owner.wallet);
 
-    index = await deployer.token.deployIndexToken(owner.address);
-    await index.transfer(indexGov.address, ether(1000));
+    dbl = await deployer.token.deployIndexToken(owner.address);
+    await dbl.transfer(dblGov.address, ether(1000));
     usdc = await deployer.mocks.deployStandardTokenMock(owner.address, 6);
     await usdc.transfer(investor.address, BigNumber.from(1_000_000 * 10 ** 6));
   });
@@ -61,14 +61,14 @@ describe("OtcEscrow", () => {
     async function subject(): Promise<OtcEscrow> {
       return await deployer.token.deployOtcEscrow(
         investor.address,
-        indexGov.address,
+        dblGov.address,
         subjectVestingStart,
         subjectVestingCliff,
         subjectVestingEnd,
         subjectUSDCAmount,
         subjectIndexAmount,
         usdc.address,
-        index.address,
+        dbl.address,
       );
     }
 
@@ -76,14 +76,14 @@ describe("OtcEscrow", () => {
       const escrow = await subject();
 
       expect(await escrow.beneficiary()).to.eq(investor.address);
-      expect(await escrow.indexGov()).to.eq(indexGov.address);
+      expect(await escrow.dblGov()).to.eq(dblGov.address);
       expect(await escrow.vestingStart()).to.eq(subjectVestingStart);
       expect(await escrow.vestingCliff()).to.eq(subjectVestingCliff);
       expect(await escrow.vestingEnd()).to.eq(subjectVestingEnd);
       expect(await escrow.usdcAmount()).to.eq(subjectUSDCAmount);
-      expect(await escrow.indexAmount()).to.eq(subjectIndexAmount);
+      expect(await escrow.dblAmount()).to.eq(subjectIndexAmount);
       expect(await escrow.usdc()).to.eq(usdc.address);
-      expect(await escrow.index()).to.eq(index.address);
+      expect(await escrow.dbl()).to.eq(dbl.address);
     });
   });
 
@@ -105,32 +105,32 @@ describe("OtcEscrow", () => {
 
       subjectOtcEscrow = await deployer.token.deployOtcEscrow(
         investor.address,
-        indexGov.address,
+        dblGov.address,
         subjectVestingStart,
         subjectVestingCliff,
         subjectVestingEnd,
         subjectUSDCAmount,
         subjectIndexAmount,
         usdc.address,
-        index.address,
+        dbl.address,
       );
 
-      await index.connect(indexGov.wallet).transfer(subjectOtcEscrow.address, subjectIndexAmount);
+      await dbl.connect(dblGov.wallet).transfer(subjectOtcEscrow.address, subjectIndexAmount);
       await usdc.connect(investor.wallet).approve(subjectOtcEscrow.address, subjectUSDCAmount);
     });
 
     async function subject(): Promise<ContractTransaction> {
-      return await subjectOtcEscrow.connect(indexGov.wallet).swap();
+      return await subjectOtcEscrow.connect(dblGov.wallet).swap();
     }
 
-    it("should send the investor's usdc to indexGov", async () => {
+    it("should send the investor's usdc to dblGov", async () => {
       const initInvestorUsdc = await usdc.balanceOf(investor.address);
-      const initEscrowIndex = await index.balanceOf(subjectOtcEscrow.address);
+      const initEscrowIndex = await dbl.balanceOf(subjectOtcEscrow.address);
 
       await subject();
 
       const finalInvestorUsdc = await usdc.balanceOf(investor.address);
-      const finalEscrowIndex = await index.balanceOf(subjectOtcEscrow.address);
+      const finalEscrowIndex = await dbl.balanceOf(subjectOtcEscrow.address);
 
       expect(initEscrowIndex.sub(finalEscrowIndex)).to.eq(subjectIndexAmount);
       expect(initInvestorUsdc.sub(finalInvestorUsdc)).to.eq(subjectUSDCAmount);
@@ -140,14 +140,14 @@ describe("OtcEscrow", () => {
       await expect(subject()).to.emit(subjectOtcEscrow, "VestingDeployed");
     });
 
-    it("it should transfer index to the vesting contract", async () => {
+    it("it should transfer dbl to the vesting contract", async () => {
       await subject();
 
       const vestingDeployed = // tslint:disable-next-line:no-null-keyword
       (await subjectOtcEscrow.queryFilter(subjectOtcEscrow.filters.VestingDeployed(null)))[0];
       const vestingAddress = vestingDeployed.args?.vesting;
 
-      expect(await index.balanceOf(vestingAddress)).to.eq(subjectIndexAmount);
+      expect(await dbl.balanceOf(vestingAddress)).to.eq(subjectIndexAmount);
     });
 
     it("it should set the state variables of the vesting contract correctly", async () => {
@@ -159,7 +159,7 @@ describe("OtcEscrow", () => {
 
       const vesting = Vesting__factory.connect(vestingAddress, getProvider());
 
-      expect(await vesting.index()).to.eq(index.address);
+      expect(await vesting.dbl()).to.eq(dbl.address);
       expect(await vesting.recipient()).to.eq(investor.address);
       expect(await vesting.vestingAmount()).to.eq(subjectIndexAmount);
       expect(await vesting.vestingBegin()).to.eq(subjectVestingStart);
@@ -187,17 +187,17 @@ describe("OtcEscrow", () => {
       beforeEach(async () => {
         subjectOtcEscrow = await deployer.token.deployOtcEscrow(
           investor.address,
-          indexGov.address,
+          dblGov.address,
           subjectVestingStart,
           subjectVestingCliff,
           subjectVestingEnd,
           subjectUSDCAmount,
           subjectIndexAmount,
           usdc.address,
-          index.address,
+          dbl.address,
         );
 
-        await index.connect(indexGov.wallet).transfer(subjectOtcEscrow.address, ether(50));
+        await dbl.connect(dblGov.wallet).transfer(subjectOtcEscrow.address, ether(50));
         await usdc.connect(investor.wallet).approve(subjectOtcEscrow.address, subjectUSDCAmount);
       });
 
@@ -220,17 +220,17 @@ describe("OtcEscrow", () => {
       beforeEach(async () => {
         subjectOtcEscrow = await deployer.token.deployOtcEscrow(
           await getRandomAddress(),
-          indexGov.address,
+          dblGov.address,
           subjectVestingStart,
           subjectVestingCliff,
           subjectVestingEnd,
           subjectUSDCAmount,
           subjectIndexAmount,
           usdc.address,
-          index.address,
+          dbl.address,
         );
 
-        await index.connect(indexGov.wallet).transfer(subjectOtcEscrow.address, subjectIndexAmount);
+        await dbl.connect(dblGov.wallet).transfer(subjectOtcEscrow.address, subjectIndexAmount);
         await usdc.connect(investor.wallet).approve(subjectOtcEscrow.address, subjectUSDCAmount);
       });
 
@@ -272,28 +272,28 @@ describe("OtcEscrow", () => {
 
       subjectOtcEscrow = await deployer.token.deployOtcEscrow(
         investor.address,
-        indexGov.address,
+        dblGov.address,
         subjectVestingStart,
         subjectVestingCliff,
         subjectVestingEnd,
         subjectUSDCAmount,
         subjectIndexAmount,
         usdc.address,
-        index.address,
+        dbl.address,
       );
 
-      await index.connect(indexGov.wallet).transfer(subjectOtcEscrow.address, subjectIndexAmount);
+      await dbl.connect(dblGov.wallet).transfer(subjectOtcEscrow.address, subjectIndexAmount);
       await usdc.connect(investor.wallet).approve(subjectOtcEscrow.address, subjectUSDCAmount);
     });
 
     async function subject(): Promise<ContractTransaction> {
-      return await subjectOtcEscrow.connect(indexGov.wallet).revoke();
+      return await subjectOtcEscrow.connect(dblGov.wallet).revoke();
     }
 
-    it("should return index when revoked", async () => {
-      const initIndexBalance = await index.balanceOf(indexGov.address);
+    it("should return dbl when revoked", async () => {
+      const initIndexBalance = await dbl.balanceOf(dblGov.address);
       await subject();
-      const finalIndexBalance = await index.balanceOf(indexGov.address);
+      const finalIndexBalance = await dbl.balanceOf(dblGov.address);
 
       expect(finalIndexBalance.sub(initIndexBalance)).to.eq(subjectIndexAmount);
     });
@@ -333,20 +333,20 @@ describe("OtcEscrow", () => {
 
       subjectOtcEscrow = await deployer.token.deployOtcEscrow(
         investor.address,
-        indexGov.address,
+        dblGov.address,
         subjectVestingStart,
         subjectVestingCliff,
         subjectVestingEnd,
         subjectUSDCAmount,
         subjectIndexAmount,
         usdc.address,
-        index.address,
+        dbl.address,
       );
     });
 
     async function subject(): Promise<ContractTransaction> {
       await usdc.connect(investor.wallet).transfer(subjectOtcEscrow.address, subjectUSDCAmount);
-      return await subjectOtcEscrow.connect(indexGov.wallet).recoverUsdc();
+      return await subjectOtcEscrow.connect(dblGov.wallet).recoverUsdc();
     }
 
     it("it should return usdc to the investor", async () => {

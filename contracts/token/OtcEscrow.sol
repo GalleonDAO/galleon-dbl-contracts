@@ -9,7 +9,7 @@ import { Vesting } from "./Vesting.sol";
 
 /**
  * @title OtcEscrow
- * @author Badger DAO (Modified by Set Protocol)
+ * @author Badger DAO (modified by Galleon)
  * 
  * A simple OTC swap contract allowing two users to set the parameters of an OTC
  * deal in the constructor arguments, and deposits the sold tokens into a vesting
@@ -27,10 +27,10 @@ contract OtcEscrow {
     /* ====== Modifiers ======== */
 
     /**
-     * Throws if the sender is not Index Gov
+     * Throws if the sender is not Dbl Gov
      */
-    modifier onlyIndexGov() {
-        require(msg.sender == indexGov, "unauthorized");
+    modifier onlyDblGov() {
+        require(msg.sender == dblGov, "unauthorized");
         _;
     }
 
@@ -46,9 +46,9 @@ contract OtcEscrow {
     /* ======== State Variables ======= */
 
     address public usdc;
-    address public index;
+    address public dbl;
 
-    address public indexGov;
+    address public dblGov;
     address public beneficiary;
 
     uint256 public vestingStart;
@@ -56,7 +56,7 @@ contract OtcEscrow {
     uint256 public vestingCliff;
 
     uint256 public usdcAmount;
-    uint256 public indexAmount;
+    uint256 public dblAmount;
 
     bool hasRun;
 
@@ -67,73 +67,73 @@ contract OtcEscrow {
     /**
      * Sets the state variables that encode the terms of the OTC sale
      *
-     * @param _beneficiary  Address that will purchase INDEX
-     * @param _indexGov     Address that will receive USDC
+     * @param _beneficiary  Address that will purchase DBL
+     * @param _dblGov     Address that will receive USDC
      * @param _vestingStart Timestamp of vesting start
      * @param _vestingCliff Timestamp of vesting cliff
      * @param _vestingEnd   Timestamp of vesting end
      * @param _usdcAmount   Amount of USDC swapped for the sale
-     * @param _indexAmount  Amount of INDEX swapped for the sale
+     * @param _dblAmount  Amount of DBL swapped for the sale
      * @param _usdcAddress  Address of the USDC token
-     * @param _indexAddress Address of the Index token
+     * @param _dblAddress Address of the Doubloon token
      */
     constructor(
         address _beneficiary,
-        address _indexGov,
+        address _dblGov,
         uint256 _vestingStart,
         uint256 _vestingCliff,
         uint256 _vestingEnd,
         uint256 _usdcAmount,
-        uint256 _indexAmount,
+        uint256 _dblAmount,
         address _usdcAddress,
-        address _indexAddress
+        address _dblAddress
     ) public {
         beneficiary = _beneficiary;
-        indexGov =  _indexGov;
+        indexGov =  _dblGov;
 
         vestingStart = _vestingStart;
         vestingCliff = _vestingCliff;
         vestingEnd = _vestingEnd;
 
         usdcAmount = _usdcAmount;
-        indexAmount = _indexAmount;
+        dblAmount = _dblAmount;
 
         usdc = _usdcAddress;
-        index = _indexAddress;
+        dbl = _dblAddress;
         hasRun = false;
     }
     
     /* ======= External Functions ======= */
 
     /**
-     * Executes the OTC deal. Sends the USDC from the beneficiary to Index Governance, and
-     * locks the INDEX in the vesting contract. Can only be called once.
+     * Executes the OTC deal. Sends the USDC from the beneficiary to Doubloon Governance, and
+     * locks the DBL in the vesting contract. Can only be called once.
      */
     function swap() external onlyOnce {
 
-        require(IERC20(index).balanceOf(address(this)) >= indexAmount, "insufficient INDEX");
+        require(IERC20(dbl).balanceOf(address(this)) >= dblAmount, "insufficient DBL");
 
         // Transfer expected USDC from beneficiary
         IERC20(usdc).safeTransferFrom(beneficiary, address(this), usdcAmount);
 
         // Create Vesting contract
-        Vesting vesting = new Vesting(index, beneficiary, indexAmount, vestingStart, vestingCliff, vestingEnd);
+        Vesting vesting = new Vesting(dbl, beneficiary, dblAmount, vestingStart, vestingCliff, vestingEnd);
 
-        // Transfer index to vesting contract
-        IERC20(index).safeTransfer(address(vesting), indexAmount);
+        // Transfer dbl to vesting contract
+        IERC20(dbl).safeTransfer(address(vesting), dblAmount);
 
-        // Transfer USDC to index governance
+        // Transfer USDC to dbl governance
         IERC20(usdc).safeTransfer(indexGov, usdcAmount);
 
         emit VestingDeployed(address(vesting));
     }
 
     /**
-     * Return INDEX to Index Governance to revoke the deal
+     * Return DBL to Doubloon Governance to revoke the deal
      */
     function revoke() external onlyIndexGov {
-        uint256 indexBalance = IERC20(index).balanceOf(address(this));
-        IERC20(index).safeTransfer(indexGov, indexBalance);
+        uint256 indexBalance = IERC20(dbl).balanceOf(address(this));
+        IERC20(dbl).safeTransfer(indexGov, indexBalance);
     }
 
     /**

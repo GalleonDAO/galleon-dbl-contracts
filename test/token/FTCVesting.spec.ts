@@ -12,7 +12,7 @@ import {
   getRandomAccount,
   getWaffleExpect,
   increaseTimeAsync,
-} from "@utils/index";
+} from "@utils/dbl";
 import { ContractTransaction } from "ethers";
 import { ONE_YEAR_IN_SECONDS } from "@utils/constants";
 
@@ -24,14 +24,14 @@ describe("FTCVesting", () => {
   let recipient: Account;
 
   let deployer: DeployHelper;
-  let index: IndexToken;
+  let dbl: IndexToken;
 
   before(async () => {
     [owner, treasury, recipient] = await getAccounts();
 
     deployer = new DeployHelper(owner.wallet);
 
-    index = await deployer.token.deployIndexToken(owner.address);
+    dbl = await deployer.token.deployIndexToken(owner.address);
   });
 
   addSnapshotBeforeRestoreAfterEach();
@@ -52,7 +52,7 @@ describe("FTCVesting", () => {
 
     async function subject(): Promise<FTCVesting> {
       return await deployer.token.deployFtcVesting(
-        index.address,
+        dbl.address,
         recipient.address,
         treasury.address,
         subjectVestingAmount,
@@ -92,7 +92,7 @@ describe("FTCVesting", () => {
       subjectVestingAmount = ether(100);
 
       subjectFtcVesting = await deployer.token.deployFtcVesting(
-        index.address,
+        dbl.address,
         recipient.address,
         treasury.address,
         subjectVestingAmount,
@@ -132,7 +132,7 @@ describe("FTCVesting", () => {
       subjectVestingAmount = ether(100);
 
       subjectFtcVesting = await deployer.token.deployFtcVesting(
-        index.address,
+        dbl.address,
         recipient.address,
         treasury.address,
         subjectVestingAmount,
@@ -174,7 +174,7 @@ describe("FTCVesting", () => {
       subjectVestingAmount = ether(1);
 
       subjectFtcVesting = await deployer.token.deployFtcVesting(
-        index.address,
+        dbl.address,
         recipient.address,
         treasury.address,
         subjectVestingAmount,
@@ -183,7 +183,7 @@ describe("FTCVesting", () => {
         subjectVestingEnd,
       );
 
-      await index.transfer(subjectFtcVesting.address, ether(1000));
+      await dbl.transfer(subjectFtcVesting.address, ether(1000));
     });
 
     async function subject(): Promise<ContractTransaction> {
@@ -191,13 +191,13 @@ describe("FTCVesting", () => {
     }
 
     it("should make a claim", async () => {
-      const initialAmount = await index.balanceOf(recipient.address);
-      const amountInContract = await index.balanceOf(subjectFtcVesting.address);
+      const initialAmount = await dbl.balanceOf(recipient.address);
+      const amountInContract = await dbl.balanceOf(subjectFtcVesting.address);
 
       await subject();
 
-      const claimedAmount = await index.balanceOf(recipient.address);
-      const remainingInContract = await index.balanceOf(subjectFtcVesting.address);
+      const claimedAmount = await dbl.balanceOf(recipient.address);
+      const remainingInContract = await dbl.balanceOf(subjectFtcVesting.address);
 
       const userHasClaimedSome = claimedAmount.gt(initialAmount);
       const contractHasLowerBalance = amountInContract.gt(remainingInContract);
@@ -207,13 +207,13 @@ describe("FTCVesting", () => {
     });
 
     it("should claim all after 2 years time", async () => {
-      const amountInContract = await index.balanceOf(subjectFtcVesting.address);
+      const amountInContract = await dbl.balanceOf(subjectFtcVesting.address);
 
       await increaseTimeAsync(ONE_YEAR_IN_SECONDS.mul(3));
       await subject();
 
-      const remainingInContract = await index.balanceOf(subjectFtcVesting.address);
-      const claimedByContributor = await index.balanceOf(recipient.address);
+      const remainingInContract = await dbl.balanceOf(subjectFtcVesting.address);
+      const claimedByContributor = await dbl.balanceOf(recipient.address);
       const noIndexLeftInContract = remainingInContract.isZero();
       const allClaimedByContributor = claimedByContributor.eq(amountInContract);
 
@@ -253,7 +253,7 @@ describe("FTCVesting", () => {
       subjectVestingAmount = ether(1);
 
       subjectFtcVesting = await deployer.token.deployFtcVesting(
-        index.address,
+        dbl.address,
         recipient.address,
         treasury.address,
         subjectVestingAmount,
@@ -262,7 +262,7 @@ describe("FTCVesting", () => {
         subjectVestingEnd,
       );
 
-      await index.transfer(subjectFtcVesting.address, ether(1000));
+      await dbl.transfer(subjectFtcVesting.address, ether(1000));
     });
 
     async function subject(): Promise<ContractTransaction> {
@@ -270,11 +270,11 @@ describe("FTCVesting", () => {
     }
 
     it("should clawback remaining funds", async () => {
-      const initAmountInContract = await index.balanceOf(subjectFtcVesting.address);
+      const initAmountInContract = await dbl.balanceOf(subjectFtcVesting.address);
       await subject();
 
-      const clawedBackAmount = await index.balanceOf(treasury.address);
-      const balanceOfContract = await index.balanceOf(subjectFtcVesting.address);
+      const clawedBackAmount = await dbl.balanceOf(treasury.address);
+      const balanceOfContract = await dbl.balanceOf(subjectFtcVesting.address);
       const hasSuccessfullyClawedBackAllFunds =
         initAmountInContract.eq(clawedBackAmount) && balanceOfContract.isZero();
 

@@ -4,7 +4,7 @@ jobs:
   checkout_and_compile:
     docker:
       - image: circleci/node:10.16.0
-    working_directory: ~/index-coop-private
+    working_directory: ~/galleon-private
     steps:
       - checkout
       - setup_remote_docker:
@@ -30,11 +30,11 @@ jobs:
       - save_cache:
           key: compiled-env-{{ .Environment.CIRCLE_SHA1 }}
           paths:
-            - ~/index-coop-private
+            - ~/galleon-private
   test:
     docker:
       - image: circleci/node:10.11.0
-    working_directory: ~/index-coop-private
+    working_directory: ~/galleon-private
     parallelism: 2
     steps:
       - setup_remote_docker:
@@ -60,7 +60,7 @@ jobs:
   test_forked_network:
     docker:
       - image: circleci/node:10.11.0
-    working_directory: ~/index-coop-private
+    working_directory: ~/galleon-private
     steps:
       - setup_remote_docker:
           docker_layer_caching: false
@@ -83,7 +83,7 @@ jobs:
   coverage:
     docker:
       - image: circleci/node:10.16.0
-    working_directory: ~/index-coop-private
+    working_directory: ~/galleon-private
     parallelism: 2
     steps:
       - setup_remote_docker:
@@ -119,7 +119,7 @@ jobs:
   coverage_forked_network:
     docker:
       - image: circleci/node:10.16.0
-    working_directory: ~/index-coop-private
+    working_directory: ~/galleon-private
     steps:
       - setup_remote_docker:
           docker_layer_caching: false
@@ -151,7 +151,7 @@ jobs:
   report_coverage:
     docker:
       - image: circleci/node:10.11.0
-    working_directory: ~/index-coop-private
+    working_directory: ~/galleon-private
     steps:
       - attach_workspace:
           at: /tmp/coverage

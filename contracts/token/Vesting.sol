@@ -8,7 +8,7 @@ import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 contract Vesting {
     using SafeMath for uint256;
 
-    address public index;
+    address public dbl;
     address public recipient;
 
     uint256 public vestingAmount;
@@ -19,7 +19,7 @@ contract Vesting {
     uint256 public lastUpdate;
 
     constructor(
-        address index_,
+        address dbl_,
         address recipient_,
         uint256 vestingAmount_,
         uint256 vestingBegin_,
@@ -30,7 +30,7 @@ contract Vesting {
         require(vestingCliff_ >= vestingBegin_, "TreasuryVester.constructor: cliff is too early");
         require(vestingEnd_ > vestingCliff_, "TreasuryVester.constructor: end is too early");
 
-        index = index_;
+        dbl = dbl_;
         recipient = recipient_;
 
         vestingAmount = vestingAmount_;
@@ -50,11 +50,11 @@ contract Vesting {
         require(block.timestamp >= vestingCliff, "TreasuryVester.claim: not time yet");
         uint256 amount;
         if (block.timestamp >= vestingEnd) {
-            amount = IERC20(index).balanceOf(address(this));
+            amount = IERC20(dbl).balanceOf(address(this));
         } else {
             amount = vestingAmount.mul(block.timestamp.sub(lastUpdate)).div(vestingEnd.sub(vestingBegin));
             lastUpdate = block.timestamp;
         }
-        IERC20(index).transfer(recipient, amount);
+        IERC20(dbl).transfer(recipient, amount);
     }
 }

@@ -11,7 +11,7 @@ import { TimeLockUpgrade } from "../lib/TimeLockUpgrade.sol";
 import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 
-contract ICManager is TimeLockUpgrade, MutualUpgrade {
+contract GalleonManager is TimeLockUpgrade, MutualUpgrade {
     using Address for address;
     using SafeMath for uint256;
     using PreciseUnitMath for uint256;

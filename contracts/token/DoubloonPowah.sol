@@ -30,19 +30,19 @@ import { Vesting } from "./Vesting.sol";
 
 
 /**
- * @title IndexPowah
- * @author Set Protocol
+ * @title DoubloonPowah
+ * @author Set Protocol (modified by Galleon)
  *
- * An ERC20 token used for tracking the voting power for the Index Coop. The mutative functions of
+ * An ERC20 token used for tracking the voting power for the Galleon DAO. The mutative functions of
  * the ERC20 interface have been disabled since the token is only designed to count votes for the
  * sake of utilizing Snapshot's erc20-balance-of strategy. This contract is inspired by Sushiswap's
  * SUSHIPOWAH contract which serves the same purpose.
  */
-contract IndexPowah is IERC20, Ownable {
+contract DoubloonPowah is IERC20, Ownable {
 
     using SafeMath for uint256;
 
-    IERC20 public indexToken;
+    IERC20 public dblToken;
 
     IMasterChef public masterChef;
     uint256 public masterChefId;
@@ -56,16 +56,16 @@ contract IndexPowah is IERC20, Ownable {
      * Sets the appropriate state variables for the contract.
      *
      * @param _owner        owner of this contract
-     * @param _indexToken   Index Coop's governance token contract
-     * @param _uniPair      INDEX-WETH Uniswap pair
-     * @param _sushiPair    INDEX-WETH Sushiswap pair
+     * @param _dblToken   Galleon DAO's governance token contract
+     * @param _uniPair      DBL-WETH Uniswap pair
+     * @param _sushiPair    DBL-WETH Sushiswap pair
      * @param _masterChef   Sushiswap MasterChef (Onsen) contract
-     * @param _farms        array of Index Coop staking farms
-     * @param _vesting      array of vesting contracts from the index sale and full time contributors
+     * @param _farms        array of Galleon DAO staking farms
+     * @param _vesting      array of vesting contracts from the dbl sale and full time contributors
      */
     constructor(
         address _owner,
-        IERC20 _indexToken,
+        IERC20 _dblToken,
         IPair _uniPair,
         IPair _sushiPair,
         IMasterChef _masterChef,
@@ -75,7 +75,7 @@ contract IndexPowah is IERC20, Ownable {
     )
         public
     {
-        indexToken = _indexToken;
+        dblToken = _dblToken;
         uniPair = _uniPair;
         sushiPair = _sushiPair;
         masterChef = _masterChef;
@@ -87,23 +87,23 @@ contract IndexPowah is IERC20, Ownable {
     }
 
     /**
-     * Computes an address's balance of IndexPowah. Balances can not be transfered in the traditional way,
-     * but are instead computed by the amount of index that an account directly hold, or indirectly holds
+     * Computes an address's balance of DoubloonPowah. Balances can not be transfered in the traditional way,
+     * but are instead computed by the amount of dbl that an account directly hold, or indirectly holds
      * through the staking contracts, vesting contracts, uniswap, and sushiswap.
      *
      * @param _account  the address of the voter
      */
     function balanceOf(address _account) public view override returns (uint256) {
-        uint256 indexAmount = indexToken.balanceOf(_account);
+        uint256 dblAmount = dblToken.balanceOf(_account);
         uint256 unclaimedInFarms = _getFarmVotes(_account);
         uint256 vestingVotes = _getVestingVotes(_account);
         uint256 dexVotes = _getDexVotes(_account, uniPair) + _getDexVotes(_account, sushiPair) + _getMasterChefVotes(_account);
 
-        return indexAmount + unclaimedInFarms + vestingVotes + dexVotes;
+        return dblAmount + unclaimedInFarms + vestingVotes + dexVotes;
     }
 
     /**
-     * ONLY OWNER: Adds new Index farms to be tracked
+     * ONLY OWNER: Adds new dbl farms to be tracked
      *
      * @param _newFarms list of new farms to be tracked
      */
@@ -114,7 +114,7 @@ contract IndexPowah is IERC20, Ownable {
     }
 
     /**
-     * ONLY OWNER: Adds new Index vesting contracts to be tracked
+     * ONLY OWNER: Adds new dbl vesting contracts to be tracked
      *
      * @param _newVesting   list of new vesting contracts to be tracked
      */
@@ -128,7 +128,7 @@ contract IndexPowah is IERC20, Ownable {
      * ONLY OWNER: Updates the MasterChef contract and pool ID
      *
      * @param _newMasterChef    address of the new MasterChef contract
-     * @param _newMasterChefId  new pool id for the index-eth MasterChef rewards
+     * @param _newMasterChefId  new pool id for the dbl-eth MasterChef rewards
      */
     function updateMasterChef(IMasterChef _newMasterChef, uint256 _newMasterChefId) external onlyOwner {
         masterChef = _newMasterChef;
@@ -147,7 +147,7 @@ contract IndexPowah is IERC20, Ownable {
         uint256 sum = 0;
         for (uint256 i = 0; i < vesting.length; i++) {
             if(vesting[i].recipient() == _account) {
-                sum += indexToken.balanceOf(address(vesting[i]));
+                sum += dblToken.balanceOf(address(vesting[i]));
             }
         }
         return sum;
@@ -164,20 +164,20 @@ contract IndexPowah is IERC20, Ownable {
     }
 
     function _getDexVotesFromBalance(uint256 lpBalance, IPair pair) internal view returns (uint256) {
-        uint256 lpIndex = indexToken.balanceOf(address(pair));
+        uint256 lpDbl = dblToken.balanceOf(address(pair));
         uint256 lpTotal = pair.totalSupply();
         if (lpTotal == 0) return 0;
-        return lpIndex.mul(lpBalance).div(lpTotal);
+        return lpDbl.mul(lpBalance).div(lpTotal);
     }
 
 
     /**
      * These functions are not used, but have been left in to keep the token ERC20 compliant
      */
-    function name() public pure returns (string memory) { return "INDEXPOWAH"; }
-    function symbol() public pure returns (string memory) { return "INDEXPOWAH"; }
+    function name() public pure returns (string memory) { return "DoubloonPowah"; }
+    function symbol() public pure returns (string memory) { return "DoubloonPowah"; }
     function decimals() public pure returns(uint8) { return 18; }
-    function totalSupply() public view override returns (uint256) { return indexToken.totalSupply(); }
+    function totalSupply() public view override returns (uint256) { return dblToken.totalSupply(); }
     function allowance(address, address) public view override returns (uint256) { return 0; }
     function transfer(address, uint256) public override returns (bool) { return false; }
     function approve(address, uint256) public override returns (bool) { return false; }

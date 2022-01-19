@@ -4,7 +4,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 
 import { Address, Account, Bytes } from "@utils/types";
 import { ADDRESS_ZERO, ONE_DAY_IN_SECONDS, ONE_YEAR_IN_SECONDS, ZERO } from "@utils/constants";
-import { ICManager } from "@utils/contracts/index";
+import { GalleonManager } from "@utils/contracts/index";
 import { SingleIndexModule, SetToken } from "@utils/contracts/setV2";
 import DeployHelper from "@utils/deploys";
 import {
@@ -26,7 +26,7 @@ import { SetFixture } from "@utils/fixtures";
 
 const expect = getWaffleExpect();
 
-describe("ICManager", () => {
+describe("GalleonManager", () => {
   let owner: Account;
   let methodologist: Account;
   let otherAccount: Account;
@@ -39,7 +39,7 @@ describe("ICManager", () => {
   let setTokensIssued: BigNumber;
   let indexModule: SingleIndexModule;
 
-  let icManager: ICManager;
+  let icManager: GalleonManager;
   let operatorFeeSplit: BigNumber;
 
   before(async () => {
@@ -91,8 +91,8 @@ describe("ICManager", () => {
     operatorFeeSplit = ether(0.7); // 70% fee split
     await setV2Setup.issuanceModule.issue(setToken.address, setTokensIssued, otherAccount.address);
 
-    // Deploy ICManager
-    icManager = await deployer.manager.deployICManager(
+    // Deploy GalleonManager
+    icManager = await deployer.manager.deployGalleonManager(
       setToken.address,
       indexModule.address,
       setV2Setup.streamingFeeModule.address,
@@ -126,8 +126,8 @@ describe("ICManager", () => {
       subjectOperatorFeeSplit = ether(0.7);
     });
 
-    async function subject(): Promise<ICManager> {
-      return await deployer.manager.deployICManager(
+    async function subject(): Promise<GalleonManager> {
+      return await deployer.manager.deployGalleonManager(
         subjectSetToken,
         subjectIndexModule,
         subjectStreamingFeeModule,
@@ -138,44 +138,44 @@ describe("ICManager", () => {
     }
 
     it("should set the correct SetToken address", async () => {
-      const retrievedICManager = await subject();
+      const retrievedGalleonManager = await subject();
 
-      const actualToken = await retrievedICManager.setToken();
+      const actualToken = await retrievedGalleonManager.setToken();
       expect (actualToken).to.eq(subjectSetToken);
     });
 
     it("should set the correct IndexModule address", async () => {
-      const retrievedICManager = await subject();
+      const retrievedGalleonManager = await subject();
 
-      const actualIndexModule = await retrievedICManager.indexModule();
+      const actualIndexModule = await retrievedGalleonManager.indexModule();
       expect (actualIndexModule).to.eq(subjectIndexModule);
     });
 
     it("should set the correct StreamingFeeModule address", async () => {
-      const retrievedICManager = await subject();
+      const retrievedGalleonManager = await subject();
 
-      const actualStreamingFeeModule = await retrievedICManager.feeModule();
+      const actualStreamingFeeModule = await retrievedGalleonManager.feeModule();
       expect (actualStreamingFeeModule).to.eq(subjectStreamingFeeModule);
     });
 
     it("should set the correct Operator address", async () => {
-      const retrievedICManager = await subject();
+      const retrievedGalleonManager = await subject();
 
-      const actualOperator = await retrievedICManager.operator();
+      const actualOperator = await retrievedGalleonManager.operator();
       expect (actualOperator).to.eq(subjectOperator);
     });
 
     it("should set the correct Methodologist address", async () => {
-      const retrievedICManager = await subject();
+      const retrievedGalleonManager = await subject();
 
-      const actualMethodologist = await retrievedICManager.methodologist();
+      const actualMethodologist = await retrievedGalleonManager.methodologist();
       expect (actualMethodologist).to.eq(subjectMethodologist);
     });
 
     it("should set the correct Coop Fee Split address", async () => {
-      const retrievedICManager = await subject();
+      const retrievedGalleonManager = await subject();
 
-      const actualOperatorFeeSplit = await retrievedICManager.operatorFeeSplit();
+      const actualOperatorFeeSplit = await retrievedGalleonManager.operatorFeeSplit();
       expect (actualOperatorFeeSplit).to.eq(subjectOperatorFeeSplit);
     });
 

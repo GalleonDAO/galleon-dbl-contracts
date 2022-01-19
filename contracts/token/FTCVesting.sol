@@ -5,13 +5,13 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 
 /// @title A vesting contract for full time contributors
-/// @author 0xModene
+/// @author 0xModene (modified by Galleon)
 /// @notice You can use this contract to set up vesting for full time DAO contributors
 /// @dev All function calls are currently implemented without side effects
 contract FTCVesting {
     using SafeMath for uint256;
 
-    address public index;
+    address public dbl;
     address public recipient;
     address public treasury;
 
@@ -23,7 +23,7 @@ contract FTCVesting {
     uint256 public lastUpdate;
 
     constructor(
-        address index_,
+        address dbl_,
         address recipient_,
         address treasury_,
         uint256 vestingAmount_,
@@ -34,7 +34,7 @@ contract FTCVesting {
         require(vestingCliff_ >= vestingBegin_, "FTCVester.constructor: cliff is too early");
         require(vestingEnd_ > vestingCliff_, "FTCVester.constructor: end is too early");
 
-        index = index_;
+        dbl = dbl_;
         recipient = recipient_;
         treasury = treasury_;
 
@@ -77,16 +77,16 @@ contract FTCVesting {
     function claim() external onlyRecipient overCliff {
         uint256 amount;
         if (block.timestamp >= vestingEnd) {
-            amount = IERC20(index).balanceOf(address(this));
+            amount = IERC20(dbl).balanceOf(address(this));
         } else {
             amount = vestingAmount.mul(block.timestamp.sub(lastUpdate)).div(vestingEnd.sub(vestingBegin));
             lastUpdate = block.timestamp;
         }
-        IERC20(index).transfer(recipient, amount);
+        IERC20(dbl).transfer(recipient, amount);
     }
 
     /// @notice Allows treasury to claw back funds in event of separation from recipient
     function clawback() external onlyTreasury {
-        IERC20(index).transfer(treasury, IERC20(index).balanceOf(address(this)));
+        IERC20(dbl).transfer(treasury, IERC20(dbl).balanceOf(address(this)));
     }
 }

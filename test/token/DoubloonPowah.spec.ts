@@ -2,7 +2,7 @@ import "module-alias/register";
 import { BigNumber } from "@ethersproject/bignumber";
 
 import { Account } from "@utils/types";
-import { IndexToken, IndexPowah, StakingRewardsV2, Vesting } from "@utils/contracts";
+import { IndexToken, DoubloonPowah, StakingRewardsV2, Vesting } from "@utils/contracts";
 import DeployHelper from "@utils/deploys";
 import {
   addSnapshotBeforeRestoreAfterEach,
@@ -24,7 +24,7 @@ import { ContractTransaction } from "ethers";
 
 const expect = getWaffleExpect();
 
-describe("IndexPowah", async () => {
+describe("DoubloonPowah", async () => {
 
   let owner: Account;
   let voter: Account;
@@ -81,8 +81,8 @@ describe("IndexPowah", async () => {
 
   describe("#constructor", async () => {
 
-    async function subject(): Promise<IndexPowah> {
-      return deployer.token.deployIndexPowah(
+    async function subject(): Promise<DoubloonPowah> {
+      return deployer.token.deployDoubloonPowah(
         owner.address,
         index.address,
         uniPair.address,
@@ -111,10 +111,10 @@ describe("IndexPowah", async () => {
 
   describe("#balanceOf", async () => {
 
-    let indexPowah: IndexPowah;
+    let indexPowah: DoubloonPowah;
 
     beforeEach(async () => {
-      indexPowah = await deployer.token.deployIndexPowah(
+      indexPowah = await deployer.token.deployDoubloonPowah(
         owner.address,
         index.address,
         uniPair.address,
@@ -295,10 +295,10 @@ describe("IndexPowah", async () => {
 
     let subjectNewFarm: StakingRewardsV2;
     let subjectCaller: Account;
-    let indexPowah: IndexPowah;
+    let indexPowah: DoubloonPowah;
 
     beforeEach(async () => {
-      indexPowah = await deployer.token.deployIndexPowah(
+      indexPowah = await deployer.token.deployDoubloonPowah(
         owner.address,
         index.address,
         uniPair.address,
@@ -338,10 +338,10 @@ describe("IndexPowah", async () => {
 
     let subjectNewVesting: Vesting;
     let subjectCaller: Account;
-    let indexPowah: IndexPowah;
+    let indexPowah: DoubloonPowah;
 
     beforeEach(async () => {
-      indexPowah = await deployer.token.deployIndexPowah(
+      indexPowah = await deployer.token.deployDoubloonPowah(
         owner.address,
         index.address,
         uniPair.address,
@@ -389,7 +389,7 @@ describe("IndexPowah", async () => {
 
   describe("#updateMasterChef", async () => {
 
-    let indexPowah: IndexPowah;
+    let indexPowah: DoubloonPowah;
     let subjectNewMasterChef: string;
     let subjectNewPoolId: BigNumber;
     let subjectCaller: Account;
@@ -399,7 +399,7 @@ describe("IndexPowah", async () => {
       subjectNewPoolId = BigNumber.from(92);
       subjectCaller = owner;
 
-      indexPowah = await deployer.token.deployIndexPowah(
+      indexPowah = await deployer.token.deployDoubloonPowah(
         owner.address,
         index.address,
         uniPair.address,

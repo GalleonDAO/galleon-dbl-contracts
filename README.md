@@ -1,15 +1,15 @@
 <p align="center">
-  <a href="https://circleci.com/gh/SetProtocol/index-coop-contracts/tree/master">
-    <img src="https://img.shields.io/circleci/project/github/SetProtocol/index-coop-smart-contracts/master.svg" />
+  <a href="https://circleci.com/gh/GalleonDAO/galleon-dao-contracts/tree/master">
+    <img src="https://img.shields.io/circleci/project/github/GalleonDAO/galleon-dao-smart-contracts/master.svg" />
   </a>
-  <a href='https://coveralls.io/github/SetProtocol/index-coop-contracts?branch=master'><img src='https://coveralls.io/repos/github/SetProtocol/index-coop-smart-contracts/badge.svg?branch=master&amp;t=4pzROZ' alt='Coverage Status' /></a>
+  <a href='https://coveralls.io/github/GalleonDAO/galleon-dao-contracts?branch=master'><img src='https://coveralls.io/repos/github/GalleonDAO/galleon-dao-smart-contracts/badge.svg?branch=master&amp;t=4pzROZ' alt='Coverage Status' /></a>
 </p>
 
-# index
+# Galleon
 
-This repo houses the [index-coop][22]'s Solidity smart contracts.
+This repo houses the [galleon-dao][22]'s Solidity smart contracts.
 
-[22]: https://www.indexcoop.com/
+[22]: https://galleon.community
 
 ## Install (for development)
 
@@ -41,25 +41,23 @@ OR `yarn test:clean` if contracts have been typings need to be updated
 
 ## Installing from `npm`
 
-`index-coop` publishes its contracts as well as [hardhat][22] and [typechain][23] compilation
+`galleon-dao` publishes its contracts as well as [hardhat][22] and [typechain][23] compilation
 artifacts to npm.
 
 The distribution comes with fixtures for mocking and testing interactions with other protocols
 including Uniswap and Compound. To use these you'll need to install the peer dependencies listed in `package.json`.
 
 ```
-npm install @setprotocol/index-coop-contracts
+npm install @setprotocol/galleon-dao-contracts
 ```
 
 [22]: https://www.npmjs.com/package/hardhat
 [23]: https://www.npmjs.com/package/typechain
 
 ## Contributing
-We highly encourage participation from the community to help shape the development of Index-Coop. If you are interested in developing on `index-coop` or have any questions, please ping us on [Discord](https://discord.com/invite/RKZ4S3b).
+We highly encourage participation from the community to help shape the development of Index-Coop. If you are interested in developing on `galleon-dao` or have any questions, please ping us on [Discord](https://discord.com/invite/RKZ4S3b).
 
 ## Security
-
-### TODO: Independent Audits
 
 ### Code Coverage
 

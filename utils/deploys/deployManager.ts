@@ -1,9 +1,9 @@
 import { Signer } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Address } from "../types";
-import { ICManager, BaseManager, BaseManagerV2 } from "../contracts/index";
+import { GalleonManager, BaseManager, BaseManagerV2 } from "../contracts/index";
 
-import { ICManager__factory } from "../../typechain/factories/ICManager__factory";
+import { GalleonManager__factory } from "../../typechain/factories/GalleonManager__factory";
 import { BaseManager__factory } from "../../typechain/factories/BaseManager__factory";
 import { BaseManagerV2__factory } from "../../typechain/factories/BaseManagerV2__factory";
 
@@ -14,15 +14,15 @@ export default class DeployToken {
     this._deployerSigner = deployerSigner;
   }
 
-  public async deployICManager(
+  public async deployGalleonManager(
     set: Address,
     indexModule: Address,
     feeModule: Address,
     operator: Address,
     methodologist: Address,
     coopFeeSplit: BigNumber
-  ): Promise<ICManager> {
-    return await new ICManager__factory(this._deployerSigner).deploy(
+  ): Promise<GalleonManager> {
+    return await new GalleonManager__factory(this._deployerSigner).deploy(
       set,
       indexModule,
       feeModule,
