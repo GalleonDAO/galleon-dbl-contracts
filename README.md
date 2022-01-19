@@ -55,7 +55,7 @@ npm install @GalleonDAO/galleon-dao-contracts
 [23]: https://www.npmjs.com/package/typechain
 
 ## Contributing
-We highly encourage participation from the community to help shape the development of Index-Coop. If you are interested in developing on `galleon-dao` or have any questions, please ping us on [Discord](https://discord.com/invite/RKZ4S3b).
+We highly encourage participation from the community to help shape the development of Index-Coop. If you are interested in developing on `galleon-dao` or have any questions, please ping us on [Discord](https://discord.gg/58uXXVWx7z).
 
 ## Security
 
