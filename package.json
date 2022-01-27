@@ -1,6 +1,6 @@
 {
   "name": "@galleondao/galleon-contracts",
-  "version": "0.0.29",
+  "version": "0.0.1",
   "description": "",
   "main": "dist",
   "types": "dist/types",
