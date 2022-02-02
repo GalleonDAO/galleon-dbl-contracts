@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 
 contract DoubloonToken {
     /// @notice EIP-20 token name for this token
-    string public constant name = "Doubloon";
+    string public constant name = "DoubloonToken";
 
     /// @notice EIP-20 token symbol for this token
     string public constant symbol = "DBL";
