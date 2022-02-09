@@ -3,8 +3,8 @@ version: 2
 jobs:
   checkout_and_compile:
     docker:
-      - image: circleci/node:10.16.0
-    working_directory: ~/galleon-private
+      - image: cimg/node:lts
+    working_directory: ~/galleon-smart-contracts
     steps:
       - checkout
       - setup_remote_docker:
@@ -30,11 +30,11 @@ jobs:
       - save_cache:
           key: compiled-env-{{ .Environment.CIRCLE_SHA1 }}
           paths:
-            - ~/galleon-private
+            - ~/galleon-smart-contracts
   test:
     docker:
-      - image: circleci/node:10.11.0
-    working_directory: ~/galleon-private
+      - image: cimg/node:lts
+    working_directory: ~/galleon-smart-contracts
     parallelism: 2
     steps:
       - setup_remote_docker:
@@ -56,11 +56,10 @@ jobs:
           command: |
             TEST_FILES="$(circleci tests glob "./test/**/*.spec.ts" | circleci tests split)"
             yarn test ${TEST_FILES}
-
   test_forked_network:
     docker:
-      - image: circleci/node:10.11.0
-    working_directory: ~/galleon-private
+      - image: cimg/node:lts
+    working_directory: ~/galleon-smart-contracts
     steps:
       - setup_remote_docker:
           docker_layer_caching: false
@@ -82,8 +81,8 @@ jobs:
 
   coverage:
     docker:
-      - image: circleci/node:10.16.0
-    working_directory: ~/galleon-private
+      - image: cimg/node:lts
+    working_directory: ~/galleon-smart-contracts
     parallelism: 2
     steps:
       - setup_remote_docker:
@@ -118,8 +117,8 @@ jobs:
 
   coverage_forked_network:
     docker:
-      - image: circleci/node:10.16.0
-    working_directory: ~/galleon-private
+      - image: cimg/node:lts
+    working_directory: ~/galleon-smart-contracts
     steps:
       - setup_remote_docker:
           docker_layer_caching: false
@@ -150,8 +149,8 @@ jobs:
 
   report_coverage:
     docker:
-      - image: circleci/node:10.11.0
-    working_directory: ~/galleon-private
+      - image: cimg/node:lts
+    working_directory: ~/galleon-smart-contracts
     steps:
       - attach_workspace:
           at: /tmp/coverage
@@ -167,7 +166,6 @@ jobs:
           name: Upload coverage
           command: |
             cat coverage/lcov.info | ./node_modules/.bin/coveralls
-
 workflows:
   version: 2
   build-and-test:
