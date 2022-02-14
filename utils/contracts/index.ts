@@ -15,8 +15,8 @@ export { FLIStrategyExtensionMock } from "../../typechain/FLIStrategyExtensionMo
 export { GIMExtension } from "../../typechain/GIMExtension";
 export { GovernanceExtension } from "../../typechain/GovernanceExtension";
 export { GovernanceAdapterMock } from "../../typechain/GovernanceAdapterMock";
-export { ICManager } from "../../typechain/ICManager";
-export { IndexToken } from "../../typechain/IndexToken";
+export { GalleonManager } from "../../typechain/GalleonManager";
+export { DoubloonToken } from "../../typechain/DoubloonToken";
 export { MasterChefMock } from "../../typechain/MasterChefMock";
 export { MerkleDistributor } from "../../typechain/MerkleDistributor";
 export { MutualUpgradeMock } from "../../typechain/MutualUpgradeMock";

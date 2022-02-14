@@ -1,6 +1,6 @@
 {
   "name": "@galleondao/galleon-contracts",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "dist",
   "types": "dist/types",
@@ -51,7 +51,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GalleonDAO/galleon-contracts.git"
+    "url": "git+https://github.com/GalleonDAO/galleon-smart-contracts.git"
   },
   "author": "andrew",
   "license": "MIT",
