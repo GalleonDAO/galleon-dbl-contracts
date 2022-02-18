@@ -79,7 +79,7 @@ contract ExchangeIssuance is ReentrancyGuard {
     );
 
     event ExchangeRedeem(
-        address indexed _recipient,     // The recipient address which redeemed the SetTokens
+        address indexed _recipient,     // The recipient adress of the output tokens obtained for redemption
         ISetToken indexed _setToken,    // The redeemed SetToken
         IERC20 indexed _outputToken,    // The address of output asset(ERC20/ETH) received by the recipient
         uint256 _amountSetRedeemed,     // The amount of SetTokens redeemed for output tokens
@@ -87,7 +87,7 @@ contract ExchangeIssuance is ReentrancyGuard {
     );
 
     event Refund(
-        address indexed _recipient,     // The recipient address which redeemed the SetTokens
+        address indexed _recipient,     // The recipient adress of the output tokens obtained for redemption
         uint256 _refundAmount           // The amount of ETH redunded to the recipient
     );
 
