@@ -2,7 +2,6 @@ import { Signer } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Address } from "../types";
 import {
-  DoubloonPowah,
   DoubloonToken,
   MerkleDistributor,
   OtcEscrow,
@@ -15,7 +14,6 @@ import { MerkleDistributor__factory } from "../../typechain/factories/MerkleDist
 import { Vesting__factory } from "../../typechain/factories/Vesting__factory";
 import { OtcEscrow__factory } from "../../typechain/factories/OtcEscrow__factory";
 import { FTCVesting__factory } from "../../typechain/factories/FTCVesting__factory";
-import { DoubloonPowah__factory } from "@typechain/factories/DoubloonPowah__factory";
 
 export default class DeployToken {
   private _deployerSigner: Signer;
@@ -94,28 +92,6 @@ export default class DeployToken {
       vestingBegin,
       vestingCliff,
       vestingEnd,
-    );
-  }
-
-  public async deployDoubloonPowah(
-    owner: Address,
-    dblToken: Address,
-    uniPair: Address,
-    sushiPair: Address,
-    masterChef: Address,
-    masterChefId: BigNumber,
-    farms: Address[],
-    vesting: Address[],
-  ): Promise<DoubloonPowah> {
-    return await new DoubloonPowah__factory(this._deployerSigner).deploy(
-      owner,
-      dblToken,
-      uniPair,
-      sushiPair,
-      masterChef,
-      masterChefId,
-      farms,
-      vesting,
     );
   }
 }

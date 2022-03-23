@@ -1,9 +1,4 @@
 export {
-  getPostFeePositionUnits,
-  getStreamingFee,
-  getStreamingFeeInflationAmount
-} from "./feeModuleUtils";
-export {
   divDown,
   min,
   preciseDiv,
